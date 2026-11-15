@@ -237,12 +237,53 @@
     $('selectedCount').textContent=`${list.length} ${list.length===1?'task':'tasks'}`;
     renderList('selectedDayList',list,'No assignments for this date.');
   }
-  document.addEventListener('click',e=>{
-    const nav=e.target.closest('[data-view]');if(nav){showView(nav.dataset.view);return;}
-    const check=e.target.closest('[data-check]');if(check){const t=tasks.find(x=>x.id===check.dataset.check);if(t){t.done=check.checked;save();render();}return;}
-    const edit=e.target.closest('[data-edit]');if(edit){editTask(edit.dataset.edit);return;}
-    const del=e.target.closest('[data-delete]');if(del){if(confirm('Delete this assignment?')){tasks=tasks.filter(t=>t.id!==del.dataset.delete);save();render();}return;}
-    const day=e.target.closest('[data-day]');if(day){selectedDate=day.dataset.day;renderCalendar();renderSelectedDay();}
+  document.addEventListener('click', e => {
+const target = e.target instanceof Element
+? e.target
+: e.target.parentElement;
+
+if (!target) return;
+
+const nav = target.closest('[data-view]');
+if (nav) {
+showView(nav.dataset.view);
+return;
+}
+
+const check = target.closest('[data-check]');
+if (check) {
+const t = tasks.find(x => x.id === check.dataset.check);
+if (t) {
+t.done = check.checked;
+save();
+render();
+}
+return;
+}
+
+const edit = target.closest('[data-edit]');
+if (edit) {
+editTask(edit.dataset.edit);
+return;
+}
+
+const del = target.closest('[data-delete]');
+if (del) {
+if (confirm('Delete this assignment?')) {
+tasks = tasks.filter(t => t.id !== del.dataset.delete);
+save();
+render();
+}
+return;
+}
+
+const day = target.closest('[data-day]');
+if (day) {
+selectedDate = day.dataset.day;
+renderCalendar();
+renderSelectedDay();
+}
+})
   });
   $('taskForm').addEventListener('submit',e=>{
     e.preventDefault();
